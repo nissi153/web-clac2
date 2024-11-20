@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사칙연산 계산기</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .calculator {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 300px;
+        }
+        
+        .display {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+            min-height: 60px;
+        }
+        
+        .current-input {
+            font-size: 24px;
+            margin: 5px 0;
+        }
+        
+        .result {
+            font-size: 16px;
+            color: #6c757d;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #dee2e6;
+        }
+        
+        .operator {
+            background-color: #ffd43b;
+        }
+        
+        .operator:hover {
+            background-color: #fcc419;
+        }
+        
+        .equals {
+            background-color: #339af0;
+            color: white;
+        }
+        
+        .equals:hover {
+            background-color: #228be6;
+        }
+        
+        .clear {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        
+        .clear:hover {
+            background-color: #fa5252;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <div class="result" id="result"></div>
+            <div class="current-input" id="current-input">0</div>
+        </div>
+        <div class="buttons">
+            <button class="clear" onclick="clearInput()">C</button>
+            <button onclick="appendNumber('(')">(</button>
+            <button onclick="appendNumber(')')">)</button>
+            <button class="operator" onclick="appendOperator('/')">/</button>
+            
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('-')">-</button>
+            
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            
+            <button onclick="appendNumber('0')">0</button>
+            <button onclick="appendNumber('.')">.</button>
+            <button onclick="backspace()">←</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        let lastResult = '';
+
+        function updateDisplay() {
+            document.getElementById('current-input').textContent = currentInput;
+            document.getElementById('result').textContent = lastResult;
+        }
+
+        function appendNumber(num) {
+            if (currentInput === '0' && num !== '.') {
+                currentInput = num;
+            } else {
+                currentInput += num;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            currentInput += ` ${operator} `;
+            updateDisplay();
+        }
+
+        function clearInput() {
+            currentInput = '0';
+            lastResult = '';
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (currentInput.length === 1) {
+                currentInput = '0';
+            } else {
+                currentInput = currentInput.slice(0, -1);
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                lastResult = currentInput + ' =';
+                // eval을 안전하게 사용하기 위한 기본적인 검증
+                if (!/^[0-9+\-*/(). ]+$/.test(currentInput)) {
+                    throw new Error('잘못된 수식입니다.');
+                }
+                const result = eval(currentInput);
+                currentInput = String(result);
+                updateDisplay();
+            } catch (error) {
+                currentInput = '오류';
+                lastResult = '잘못된 수식입니다.';
+                updateDisplay();
+                setTimeout(clearInput, 1500);
+            }
+        }
+    </script>
+</body>
+</html>
